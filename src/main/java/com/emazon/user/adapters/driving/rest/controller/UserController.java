@@ -1,16 +1,12 @@
 package com.emazon.user.adapters.driving.rest.controller;
 
 import com.emazon.user.adapters.driving.rest.dto.request.AuthenticationRequestDTO;
-import com.emazon.user.adapters.driving.rest.dto.request.RegisterRequestDTO;
 import com.emazon.user.adapters.driving.rest.dto.response.AuthenticationResponseDTO;
-import com.emazon.user.adapters.driving.rest.service.IRegisterService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,13 +14,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/user")
 @RequiredArgsConstructor
-public class AuthenticateController {
-    private final IRegisterService registerService;
+public class UserController {
 
 
-    @Operation(summary = "Login to application")
+    @Operation(summary = "Create user into application")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "User logged", content = @Content),
             @ApiResponse(responseCode = "409", description = "User already exists", content = @Content),
@@ -35,19 +30,4 @@ public class AuthenticateController {
 //        return ResponseEntity.ok(authenticationService.authenticate(authenticationRequestDTO));
         return null;
     }
-
-    @Operation(summary = "Add a new user to system")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "User added", content = @Content),
-            @ApiResponse(responseCode = "409", description = "User already exists", content = @Content),
-            @ApiResponse(responseCode = "400", description = "User name is too long", content = @Content)
-    })
-    @PostMapping("/register")
-    public ResponseEntity<Void> register(@Valid @RequestBody RegisterRequestDTO registerRequestDTO){
-        registerService.register(registerRequestDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
-    }
-
 }
-
-

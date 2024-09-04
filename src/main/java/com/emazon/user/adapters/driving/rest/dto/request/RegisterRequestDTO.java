@@ -1,4 +1,5 @@
 package com.emazon.user.adapters.driving.rest.dto.request;
+import com.emazon.user.adapters.driven.jpa.entity.RoleEnum;
 import com.emazon.user.domain.utils.DomainConstants;
 import jakarta.validation.constraints.*;
 import lombok.*;
@@ -28,13 +29,20 @@ public class RegisterRequestDTO {
     private Long cellPhone;
 
     @Past(message = DomainConstants.FIELD_NEW_BORN_NULL_MESSAGE)
-    private Date bornDate;
+    private Date birthDate;
 
     @NotBlank(message = DomainConstants.FIELD_EMAIL_NULL_MESSAGE)
     @Pattern(regexp = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$",
             message = DomainConstants.FIELD_EMAIL_VALID_FORMAT_MESSAGE)
     private String email;
 
+    @NotBlank(message = DomainConstants.FIELD_PASSWORD_MESSAGE)
+    @Pattern(regexp = "^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>\\/?]).{8,}$",
+            message = DomainConstants.FIELD_PASSWORD_FORMAT_MESSAGE)
+    @Size(min = 8, max = 20, message = DomainConstants.FIELD_PASSWORD_LENGTH_MESSAGE)
     private String password;
+
+    @NotNull
+    private RoleEnum role;
 
 }

@@ -1,7 +1,7 @@
 package com.emazon.user.adapters.driving.rest.controller;
 
 import com.emazon.user.adapters.driving.rest.dto.request.AuthenticationRequestDTO;
-import com.emazon.user.adapters.driving.rest.dto.response.AuthenticationResponseDTO;
+import com.emazon.user.domain.dto.response.AuthDtoResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -26,7 +26,7 @@ public class UserController {
             @ApiResponse(responseCode = "400", description = "User name is too long", content = @Content)
     })
     @PostMapping("/login")
-    public ResponseEntity<AuthenticationResponseDTO> authenticate(@RequestBody AuthenticationRequestDTO authenticationRequestDTO){
+    public ResponseEntity<AuthDtoResponse> authenticate(@RequestBody AuthenticationRequestDTO authenticationRequestDTO){
 //        return ResponseEntity.ok(authenticationService.authenticate(authenticationRequestDTO));
         return null;
     }

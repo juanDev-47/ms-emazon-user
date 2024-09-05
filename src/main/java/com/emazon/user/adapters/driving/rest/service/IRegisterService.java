@@ -1,11 +1,15 @@
 package com.emazon.user.adapters.driving.rest.service;
 
+import com.emazon.user.adapters.driving.rest.dto.request.AuthenticationRequestDTO;
 import com.emazon.user.adapters.driving.rest.dto.request.RegisterRequestDTO;
-import com.emazon.user.adapters.driving.rest.dto.response.AuthenticationResponseDTO;
-import org.springframework.stereotype.Service;
+import com.emazon.user.domain.dto.request.AuthDtoRequest;
+import com.emazon.user.domain.dto.response.AuthDtoResponse;
 
-@Service
+
 public interface IRegisterService {
 
-    void register(RegisterRequestDTO registerRequestDTO);
+    AuthDtoResponse registerAuxBodega(RegisterRequestDTO registerRequestDTO);
+
+    AuthDtoResponse authenticate(AuthenticationRequestDTO authenticationRequestDTO);
+
 }

@@ -2,8 +2,9 @@ package com.emazon.user.adapters.driving.rest.controller;
 
 import com.emazon.user.adapters.driving.rest.dto.request.AuthenticationRequestDTO;
 import com.emazon.user.adapters.driving.rest.dto.request.RegisterRequestDTO;
-import com.emazon.user.adapters.driving.rest.dto.response.AuthenticationResponseDTO;
 import com.emazon.user.adapters.driving.rest.service.IRegisterService;
+import com.emazon.user.domain.dto.response.AuthDtoResponse;
+import io.swagger.v3.core.util.Json;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -12,15 +13,16 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import static org.hibernate.query.sqm.tree.SqmNode.log;
+
 
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
 public class AuthenticateController {
+
     private final IRegisterService registerService;
 
 
@@ -31,9 +33,8 @@ public class AuthenticateController {
             @ApiResponse(responseCode = "400", description = "User name is too long", content = @Content)
     })
     @PostMapping("/login")
-    public ResponseEntity<AuthenticationResponseDTO> authenticate(@RequestBody AuthenticationRequestDTO authenticationRequestDTO){
-//        return ResponseEntity.ok(authenticationService.authenticate(authenticationRequestDTO));
-        return null;
+    public ResponseEntity<AuthDtoResponse> authenticate(@RequestBody AuthenticationRequestDTO authenticationRequestDTO){
+        return ResponseEntity.ok(registerService.authenticate(authenticationRequestDTO));
     }
 
     @Operation(summary = "Add a new user to system")
@@ -42,10 +43,19 @@ public class AuthenticateController {
             @ApiResponse(responseCode = "409", description = "User already exists", content = @Content),
             @ApiResponse(responseCode = "400", description = "User name is too long", content = @Content)
     })
-    @PostMapping("/register")
-    public ResponseEntity<Void> register(@Valid @RequestBody RegisterRequestDTO registerRequestDTO){
-        registerService.register(registerRequestDTO);
+    @PostMapping(value = "registerAux")
+    public ResponseEntity<AuthDtoResponse> registerAuxBodega(@Valid @RequestBody RegisterRequestDTO registerRequestDTO){
+        log.info("Entering register method");
+        System.out.println("from register controller:");
+        Json.pretty(registerRequestDTO);
+        System.out.println("");
+        registerService.registerAuxBodega(registerRequestDTO);
         return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    @GetMapping
+    public ResponseEntity<String> holaMundo(){
+        return ResponseEntity.ok("Hola mundo");
     }
 
 }

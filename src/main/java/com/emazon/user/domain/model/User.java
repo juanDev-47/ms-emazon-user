@@ -1,5 +1,6 @@
 package com.emazon.user.domain.model;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 public class User {
@@ -7,13 +8,13 @@ public class User {
     private String name;
     private String lastName;
     private Long idDocument;
-    private Long cellPhone;
-    private Date birthDate;
+    private String cellPhone;
+    private LocalDate birthDate;
     private String email;
     private String password;
     private Role role;
 
-    public User(String name, String lastName, Long idDocument, Long cellPhone, Date birthDate,String email, String password, Role role) {
+    public User(String name, String lastName, Long idDocument, String cellPhone, LocalDate birthDate,String email, String password, Role role) {
         this.name = name;
         this.lastName = lastName;
         this.idDocument = idDocument;
@@ -64,19 +65,19 @@ public class User {
         this.idDocument = idDocument;
     }
 
-    public Long getCellPhone() {
+    public String getCellPhone() {
         return cellPhone;
     }
 
-    public void setCellPhone(Long cellPhone) {
+    public void setCellPhone(String cellPhone) {
         this.cellPhone = cellPhone;
     }
 
-    public Date getBirthDate() {
+    public LocalDate getBirthDate() {
         return birthDate;
     }
 
-    public void setBirthDate(Date birthDate) {
+    public void setBirthDate(LocalDate birthDate) {
         this.birthDate = birthDate;
     }
 

@@ -1,5 +1,6 @@
 package com.emazon.user.configuration.security;
 
+import com.emazon.user.adapters.driven.security.jwt.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -25,7 +26,7 @@ import java.util.List;
 @EnableMethodSecurity
 public class ConfigFilter {
     private final AuthenticationProvider authenticationProvider;
-//    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
     @Value("${allowed-origins}")
     private List<String> allowedOrigins;
@@ -34,25 +35,19 @@ public class ConfigFilter {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
-                .cors(corsConfiguration -> corsConfiguration.configurationSource(corsConfigurationSource()))
-                .authorizeHttpRequests(authRequest -> authRequest
-                        .requestMatchers(new AntPathRequestMatcher("/auth/**")).permitAll()
-                        .requestMatchers(new AntPathRequestMatcher("/swagger-ui/**")).permitAll()
-                        .requestMatchers(new AntPathRequestMatcher("/v3/api-docs/**")).permitAll()
-                        .anyRequest().authenticated()
-                )
+                .authorizeHttpRequests(authRequest -> {
+                    authRequest.requestMatchers("auth/login").permitAll();
+                    authRequest.requestMatchers("auth/registerAux").permitAll();
+                    authRequest.requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll();
+                    authRequest.anyRequest().authenticated();
+                })
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider)
-                .formLogin(Customizer.withDefaults())
-                .httpBasic(Customizer.withDefaults())
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
-
-
-//        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-
-
     }
 
+//                .cors(corsConfiguration -> corsConfiguration.configurationSource(corsConfigurationSource()))
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

@@ -23,19 +23,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @Configuration
 @RequiredArgsConstructor
 public class BeanConfiguration {
-    private final UserEntityMapper userEntityMapper;
     private final UserRepository userRepository;
-    private final JwtService jwtService;
-    private final PasswordEncoder passwordEncoder;
 
     @Bean
-    public AuthenticatePort userRegisterPort() {
-        return new SecurityJwtAdapter(userEntityMapper, userRepository, jwtService, passwordEncoder);
-    }
-
-    @Bean
-    public IAuthenticateServicePort userServicePort(){
-        return new AuthenticateUseCase(userRegisterPort());
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 
     @Bean
@@ -44,21 +36,16 @@ public class BeanConfiguration {
     }
 
     @Bean
-    public AuthenticationProvider authenticationProvider() {
-        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-        authProvider.setUserDetailsService(userDetailService());
-        authProvider.setPasswordEncoder(encoder());
-        return  authProvider;
-    }
-
-    @Bean
     public UserDetailsService userDetailService() {
         return username -> (UserDetails) userRepository.findByEmail(username).orElseThrow(() -> new UsernameNotFoundException("User not found"));
     }
 
     @Bean
-    public PasswordEncoder encoder() {
-        return new BCryptPasswordEncoder();
+    public AuthenticationProvider authenticationProvider() {
+        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+        authProvider.setUserDetailsService(userDetailService());
+        authProvider.setPasswordEncoder(passwordEncoder());
+        return  authProvider;
     }
 
 

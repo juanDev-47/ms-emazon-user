@@ -1,10 +1,13 @@
 package com.emazon.user.configuration.advice;
 
+import com.emazon.user.domain.exception.EmailAlreadyExistException;
+import com.emazon.user.domain.exception.UnderageUserException;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
+import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -52,6 +55,28 @@ public class ExceptionAdvisor {
         body.put("path", request.getDescription(false));
 
         return new ResponseEntity<>(body, HttpStatus.FORBIDDEN);
+    }
+
+    @ExceptionHandler(UnderageUserException.class)
+    public ResponseEntity<ExceptionResponse> handleUnderageUserException(UnderageUserException ex) {
+        ExceptionResponse exceptionResponse = ExceptionResponse.builder()
+                .statusCode(HttpStatus.CONFLICT.value())
+                .status(HttpStatus.CONFLICT)
+                .timestamp(LocalDateTime.now())
+                .message(ex.getMessage()).build();
+
+        return ResponseEntity.status(exceptionResponse.getStatusCode()).body(exceptionResponse);
+    }
+
+    @ExceptionHandler(EmailAlreadyExistException.class)
+    public ResponseEntity<ExceptionResponse> handleEmailAlreadyExistException(EmailAlreadyExistException ex) {
+        ExceptionResponse exceptionResponse = ExceptionResponse.builder()
+                .statusCode(HttpStatus.CONFLICT.value())
+                .status(HttpStatus.CONFLICT)
+                .timestamp(LocalDateTime.now())
+                .message(ex.getMessage()).build();
+
+        return ResponseEntity.status(exceptionResponse.getStatusCode()).body(exceptionResponse);
     }
 
 }

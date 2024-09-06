@@ -4,7 +4,7 @@ import com.emazon.user.domain.utils.DomainConstants;
 import jakarta.validation.constraints.*;
 import lombok.*;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 @Getter
 @Setter
@@ -26,10 +26,10 @@ public class RegisterRequestDTO {
     @NotNull(message = DomainConstants.FIELD_PHONE_NULL_MESSAGE)
     @Pattern(regexp = "^\\+?[0-9]{10,13}$",
             message = DomainConstants.FIELD_PHONE_WELL_FORMATTED_MESSAGE)
-    private Long cellPhone;
+    private String cellPhone;
 
     @Past(message = DomainConstants.FIELD_NEW_BORN_NULL_MESSAGE)
-    private Date birthDate;
+    private LocalDate birthDate;
 
     @NotBlank(message = DomainConstants.FIELD_EMAIL_NULL_MESSAGE)
     @Pattern(regexp = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$",
@@ -37,7 +37,7 @@ public class RegisterRequestDTO {
     private String email;
 
     @NotBlank(message = DomainConstants.FIELD_PASSWORD_MESSAGE)
-    @Pattern(regexp = "^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>\\/?]).{8,}$",
+    @Pattern(regexp = "^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>/?]).{8,}$",
             message = DomainConstants.FIELD_PASSWORD_FORMAT_MESSAGE)
     @Size(min = 8, max = 20, message = DomainConstants.FIELD_PASSWORD_LENGTH_MESSAGE)
     private String password;

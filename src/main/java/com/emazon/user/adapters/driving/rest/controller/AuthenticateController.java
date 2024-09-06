@@ -45,17 +45,7 @@ public class AuthenticateController {
     })
     @PostMapping(value = "registerAux")
     public ResponseEntity<AuthDtoResponse> registerAuxBodega(@Valid @RequestBody RegisterRequestDTO registerRequestDTO){
-        log.info("Entering register method");
-        System.out.println("from register controller:");
-        Json.pretty(registerRequestDTO);
-        System.out.println("");
-        registerService.registerAuxBodega(registerRequestDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
-    }
-
-    @GetMapping
-    public ResponseEntity<String> holaMundo(){
-        return ResponseEntity.ok("Hola mundo");
+        return ResponseEntity.ok(registerService.registerAuxBodega(registerRequestDTO));
     }
 
 }

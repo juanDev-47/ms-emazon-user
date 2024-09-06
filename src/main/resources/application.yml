@@ -1,2 +1,28 @@
+server:
+  port: 8090
+
 spring:
-  server.port: 8090
+  datasource:
+    url: jdbc:mysql://localhost/authentication
+    username: root
+    password: root123
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+logging:
+  level:
+    web: trace
+    org:
+      springframework:
+        security: trace
+
+app:
+  secret-key: ${secret_key}
+
+allowed-origins:
+  http://localhost:3000/,
+  *,

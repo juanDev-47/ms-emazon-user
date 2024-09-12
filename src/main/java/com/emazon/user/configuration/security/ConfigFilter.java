@@ -1,6 +1,7 @@
 package com.emazon.user.configuration.security;
 
 import com.emazon.user.adapters.driven.security.jwt.JwtAuthenticationFilter;
+import com.emazon.user.configuration.advice.CustomAccessDeniedHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -23,7 +24,6 @@ import java.util.List;
 @Configuration
 @RequiredArgsConstructor
 @EnableWebSecurity
-@EnableMethodSecurity
 public class ConfigFilter {
     private final AuthenticationProvider authenticationProvider;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
@@ -37,17 +37,20 @@ public class ConfigFilter {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authRequest -> {
                     authRequest.requestMatchers("auth/login").permitAll();
-                    authRequest.requestMatchers("auth/registerAux").permitAll();
+                    authRequest.requestMatchers("auth/authorize").hasAnyAuthority("ROLE_ADMIN", "ROLE_USER", "ROLE_AUX_BODEGA");
+                    authRequest.requestMatchers("auth/registerAux").hasAnyAuthority("ROLE_ADMIN");
                     authRequest.requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll();
                     authRequest.anyRequest().authenticated();
                 })
+                .exceptionHandling(exception -> exception
+                        .accessDeniedHandler(new CustomAccessDeniedHandler())
+                )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
 
-//                .cors(corsConfiguration -> corsConfiguration.configurationSource(corsConfigurationSource()))
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

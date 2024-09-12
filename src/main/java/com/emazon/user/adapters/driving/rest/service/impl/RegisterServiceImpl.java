@@ -5,7 +5,9 @@ import com.emazon.user.adapters.driving.rest.dto.request.RegisterRequestDTO;
 import com.emazon.user.adapters.driving.rest.mapper.request.UserRequestMapper;
 import com.emazon.user.adapters.driving.rest.service.IRegisterService;
 import com.emazon.user.domain.api.IAuthenticateServicePort;
+import com.emazon.user.domain.dto.request.AuthorizationRequestDTO;
 import com.emazon.user.domain.dto.response.AuthDtoResponse;
+import com.emazon.user.domain.dto.response.AuthorizationResponseDTO;
 import io.swagger.v3.core.util.Json;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,14 +20,17 @@ public class RegisterServiceImpl implements IRegisterService {
 
     @Override
     public AuthDtoResponse registerAuxBodega(RegisterRequestDTO registerRequestDTO) {
-        System.out.println("from service controller:");
-        Json.pretty(registerRequestDTO);
         return userServicePort.registerAuxBodega(userRequestMapper.toUser(registerRequestDTO));
     }
 
     @Override
-    public AuthDtoResponse authenticate(AuthenticationRequestDTO authenticationRequestDTO) {
-        return userServicePort.authenticate(userRequestMapper.toDto(authenticationRequestDTO));
+    public AuthDtoResponse login(AuthenticationRequestDTO authenticationRequestDTO) {
+        return userServicePort.login(userRequestMapper.toDto(authenticationRequestDTO));
+    }
+
+    @Override
+    public AuthorizationResponseDTO authorize(String token) {
+        return userServicePort.authorize(token);
     }
 
 

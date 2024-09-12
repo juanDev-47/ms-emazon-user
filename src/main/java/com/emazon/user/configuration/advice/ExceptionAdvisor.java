@@ -1,23 +1,20 @@
 package com.emazon.user.configuration.advice;
 
+import com.emazon.user.adapters.driven.security.exceptions.InvalidTokenException;
+import com.emazon.user.domain.exception.BadPasswordException;
 import com.emazon.user.domain.exception.EmailAlreadyExistException;
+import com.emazon.user.domain.exception.EmailNotFoundException;
 import com.emazon.user.domain.exception.UnderageUserException;
-import lombok.extern.slf4j.Slf4j;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
-import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.context.request.WebRequest;
 
-import java.nio.file.AccessDeniedException;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Logger;
 
 import static org.hibernate.query.sqm.tree.SqmNode.log;
 
@@ -43,18 +40,10 @@ public class ExceptionAdvisor {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
     }
 
-    @ExceptionHandler(AccessDeniedException.class)
-    public ResponseEntity<Object> handleAccessDeniedException(
-            AccessDeniedException ex, WebRequest request) {
-
-        Map<String, Object> body = new HashMap<>();
-        body.put("timestamp", LocalDateTime.now());
-        body.put("status", HttpStatus.FORBIDDEN.value());
-        body.put("error", "Acceso Denegado");
-        body.put("message", "No tiene permisos para acceder a este recurso");
-        body.put("path", request.getDescription(false));
-
-        return new ResponseEntity<>(body, HttpStatus.FORBIDDEN);
+    @ExceptionHandler(InvalidTokenException.class)
+    public ResponseEntity<String> handleInvalidTokenException(InvalidTokenException e) {
+        log.error("Unhandled exception", e);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred");
     }
 
     @ExceptionHandler(UnderageUserException.class)
@@ -78,5 +67,28 @@ public class ExceptionAdvisor {
 
         return ResponseEntity.status(exceptionResponse.getStatusCode()).body(exceptionResponse);
     }
+
+    @ExceptionHandler(EmailNotFoundException.class)
+    public ResponseEntity<ExceptionResponse> handleEmailNotFoundException(EmailNotFoundException ex) {
+        ExceptionResponse exceptionResponse = ExceptionResponse.builder()
+                .statusCode(HttpStatus.CONFLICT.value())
+                .status(HttpStatus.CONFLICT)
+                .timestamp(LocalDateTime.now())
+                .message(ex.getMessage()).build();
+
+        return ResponseEntity.status(exceptionResponse.getStatusCode()).body(exceptionResponse);
+    }
+
+    @ExceptionHandler(BadPasswordException.class)
+    public ResponseEntity<ExceptionResponse> handleBadCredentialsException(BadPasswordException ex){
+        ExceptionResponse exceptionResponse = ExceptionResponse.builder()
+                .statusCode(HttpStatus.CONFLICT.value())
+                .status(HttpStatus.CONFLICT)
+                .timestamp(LocalDateTime.now())
+                .message(ex.getMessage()).build();
+
+        return ResponseEntity.status(exceptionResponse.getStatusCode()).body(exceptionResponse);
+    }
+
 
 }

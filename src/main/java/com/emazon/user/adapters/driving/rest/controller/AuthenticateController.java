@@ -3,7 +3,9 @@ package com.emazon.user.adapters.driving.rest.controller;
 import com.emazon.user.adapters.driving.rest.dto.request.AuthenticationRequestDTO;
 import com.emazon.user.adapters.driving.rest.dto.request.RegisterRequestDTO;
 import com.emazon.user.adapters.driving.rest.service.IRegisterService;
+import com.emazon.user.domain.dto.request.AuthorizationRequestDTO;
 import com.emazon.user.domain.dto.response.AuthDtoResponse;
+import com.emazon.user.domain.dto.response.AuthorizationResponseDTO;
 import io.swagger.v3.core.util.Json;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -33,8 +35,8 @@ public class AuthenticateController {
             @ApiResponse(responseCode = "400", description = "User name is too long", content = @Content)
     })
     @PostMapping("/login")
-    public ResponseEntity<AuthDtoResponse> authenticate(@RequestBody AuthenticationRequestDTO authenticationRequestDTO){
-        return ResponseEntity.ok(registerService.authenticate(authenticationRequestDTO));
+    public ResponseEntity<AuthDtoResponse> authenticate(@Valid @RequestBody AuthenticationRequestDTO authenticationRequestDTO){
+        return ResponseEntity.ok(registerService.login(authenticationRequestDTO));
     }
 
     @Operation(summary = "Add a new user to system")
@@ -46,6 +48,11 @@ public class AuthenticateController {
     @PostMapping(value = "registerAux")
     public ResponseEntity<AuthDtoResponse> registerAuxBodega(@Valid @RequestBody RegisterRequestDTO registerRequestDTO){
         return ResponseEntity.ok(registerService.registerAuxBodega(registerRequestDTO));
+    }
+
+    @PostMapping("/authorize")
+    public ResponseEntity<AuthorizationResponseDTO> authorize(@RequestBody AuthorizationRequestDTO token){
+        return ResponseEntity.accepted().body(registerService.authorize(token.getToken()));
     }
 
 }

@@ -3,8 +3,12 @@ package com.emazon.user.domain.api.usecase;
 import com.emazon.user.domain.api.IAuthenticateServicePort;
 import com.emazon.user.domain.api.IUserServicePort;
 import com.emazon.user.domain.dto.request.AuthDtoRequest;
+import com.emazon.user.domain.dto.request.AuthorizationRequestDTO;
 import com.emazon.user.domain.dto.response.AuthDtoResponse;
+import com.emazon.user.domain.dto.response.AuthorizationResponseDTO;
 import com.emazon.user.domain.exception.EmailAlreadyExistException;
+import com.emazon.user.domain.exception.EmailNotFoundException;
+import com.emazon.user.domain.exception.TokenNullException;
 import com.emazon.user.domain.model.User;
 import com.emazon.user.domain.spi.AuthenticatePort;
 import com.emazon.user.domain.spi.UserPort;
@@ -37,8 +41,16 @@ public class AuthenticateUseCase implements IAuthenticateServicePort, IUserServi
     }
 
     @Override
-    public AuthDtoResponse authenticate(AuthDtoRequest authDtoRequest) {
-        return null;
+    public AuthDtoResponse login(AuthDtoRequest authDtoRequest) {
+        if (!existByEmail(authDtoRequest.getEmail())) throw new EmailNotFoundException(DomainConstants.FIELD_EMAIL_NOT_FOUND_MESSAGE);
+
+        return authenticatePort.login(authDtoRequest);
+    }
+
+    @Override
+    public AuthorizationResponseDTO authorize(String token) {
+        if (token == null) throw new TokenNullException(DomainConstants.FIELD_TOKEN_NULL_MESSAGE);
+        return authenticatePort.authorize(token);
     }
 
 
